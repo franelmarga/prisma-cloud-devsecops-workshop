@@ -1,7 +1,7 @@
 locals {
-  start_cron           = try(var.env_vars["start_cron"],"cron(30 6 * * ? *)")
-  stop_cron            = try(var.env_vars["stop_cron"],"cron(* 20 * * ? *)")
-  deregister_amis_cron = try(var.env_vars["deregister_amis_cron"],"cron(0 0 ? * SUN *)")
+  start_cron           = try(var.env_vars["start_cron"], "cron(30 6 * * ? *)")
+  stop_cron            = try(var.env_vars["stop_cron"], "cron(* 20 * * ? *)")
+  deregister_amis_cron = try(var.env_vars["deregister_amis_cron"], "cron(0 0 ? * SUN *)")
 
   starter_lambda_path         = try(var.env_vars["starter_lambda_path"])
   stopper_lambda_path         = try(var.env_vars["stopper_lambda_path"])
@@ -33,6 +33,10 @@ module "lambda_working_hours" {
       }
     ]
   })
+  tags = {
+    yor_name  = "lambda_working_hours"
+    yor_trace = "b3fcc77b-d94b-497e-b296-4d9a1f1652b8"
+  }
 }
 
 module "lambda_sleeping_hours" {
@@ -59,6 +63,10 @@ module "lambda_sleeping_hours" {
       }
     ]
   })
+  tags = {
+    yor_name  = "lambda_sleeping_hours"
+    yor_trace = "0bd5534d-fb3b-4cf9-ac6f-67e7bd9a6d39"
+  }
 }
 
 module "eventbridge_schedules" {
@@ -102,6 +110,10 @@ module "eventbridge_schedules" {
         arn  = module.lambda_deregister_amis.lambda_function_arn
       }
     ]
+  }
+  tags = {
+    yor_name  = "eventbridge_schedules"
+    yor_trace = "3407935a-ce5d-448d-8f08-19965878c5af"
   }
 }
 resource "aws_lambda_permission" "allow_eventbridge_to_start" {
